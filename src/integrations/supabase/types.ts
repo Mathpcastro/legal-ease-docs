@@ -9,7 +9,192 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      document_signatures: {
+        Row: {
+          created_at: string | null
+          document_id: string
+          id: string
+          signature_data: string | null
+          signed_at: string | null
+          signer_email: string
+          signer_name: string
+          status: Database["public"]["Enums"]["signature_status"] | null
+        }
+        Insert: {
+          created_at?: string | null
+          document_id: string
+          id?: string
+          signature_data?: string | null
+          signed_at?: string | null
+          signer_email: string
+          signer_name: string
+          status?: Database["public"]["Enums"]["signature_status"] | null
+        }
+        Update: {
+          created_at?: string | null
+          document_id?: string
+          id?: string
+          signature_data?: string | null
+          signed_at?: string | null
+          signer_email?: string
+          signer_name?: string
+          status?: Database["public"]["Enums"]["signature_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_signatures_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          template_content: Json
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          template_content: Json
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          template_content?: Json
+          type?: Database["public"]["Enums"]["document_type"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      document_versions: {
+        Row: {
+          content: Json
+          created_at: string | null
+          created_by: string
+          document_id: string
+          id: string
+          version_number: number
+        }
+        Insert: {
+          content: Json
+          created_at?: string | null
+          created_by: string
+          document_id: string
+          id?: string
+          version_number: number
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          created_by?: string
+          document_id?: string
+          id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          content: Json
+          created_at: string | null
+          creator_id: string
+          expires_at: string | null
+          id: string
+          status: Database["public"]["Enums"]["document_status"] | null
+          template_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          content: Json
+          created_at?: string | null
+          creator_id: string
+          expires_at?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["document_status"] | null
+          template_id?: string | null
+          title: string
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          creator_id?: string
+          expires_at?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["document_status"] | null
+          template_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["document_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "document_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          company: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +203,22 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      document_status:
+        | "draft"
+        | "pending_signature"
+        | "signed"
+        | "expired"
+        | "cancelled"
+      document_type:
+        | "contract"
+        | "nda"
+        | "power_of_attorney"
+        | "service_agreement"
+        | "employment_contract"
+        | "rental_agreement"
+        | "partnership_agreement"
+        | "other"
+      signature_status: "pending" | "signed" | "declined"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +333,25 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      document_status: [
+        "draft",
+        "pending_signature",
+        "signed",
+        "expired",
+        "cancelled",
+      ],
+      document_type: [
+        "contract",
+        "nda",
+        "power_of_attorney",
+        "service_agreement",
+        "employment_contract",
+        "rental_agreement",
+        "partnership_agreement",
+        "other",
+      ],
+      signature_status: ["pending", "signed", "declined"],
+    },
   },
 } as const
