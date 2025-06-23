@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -91,10 +90,13 @@ const Create = () => {
         return;
       }
 
+      const selectedDocType = documentTypes.find(t => t.value === documentType);
+
       const response = await supabase.functions.invoke('generate-document', {
         body: {
           description,
-          documentType: documentTypes.find(t => t.value === documentType)?.label,
+          documentType: documentType, // Valor do enum
+          documentTypeLabel: selectedDocType?.label, // Label para exibição
           signers,
           fillWithData,
           specificData
@@ -105,11 +107,12 @@ const Create = () => {
       });
 
       if (response.error) {
+        console.error('Function error:', response.error);
         throw response.error;
       }
 
       toast.success('Documento gerado com sucesso!');
-      navigate(`/documents/${response.data.document.id}`);
+      navigate('/dashboard');
       
     } catch (error) {
       console.error('Erro ao gerar documento:', error);

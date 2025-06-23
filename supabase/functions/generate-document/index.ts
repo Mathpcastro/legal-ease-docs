@@ -30,15 +30,18 @@ serve(async (req) => {
     const { 
       description, 
       documentType, 
+      documentTypeLabel,
       signers, 
       fillWithData, 
       specificData 
     } = await req.json();
 
+    console.log('Received data:', { documentType, documentTypeLabel, signers: signers.length });
+
     // Construir o prompt para a OpenAI
     let prompt = `Você é um especialista em documentos legais brasileiros. 
     
-Crie um documento do tipo "${documentType}" baseado na seguinte descrição: "${description}"
+Crie um documento do tipo "${documentTypeLabel}" baseado na seguinte descrição: "${description}"
 
 O documento deve incluir espaços para as seguintes assinaturas:
 ${signers.map((signer: any, index: number) => `${index + 1}. ${signer.name} (${signer.email}) - ${signer.role || 'Parte'}`).join('\n')}`;
@@ -59,6 +62,8 @@ ${specificData.map((data: any) => `- ${data.label}: ${data.value}`).join('\n')}`
 - Incluir data e local para assinatura
 
 Retorne apenas o conteúdo do documento em formato texto, sem explicações adicionais.`;
+
+    console.log('Calling OpenAI API...');
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -81,18 +86,21 @@ Retorne apenas o conteúdo do documento em formato texto, sem explicações adic
     });
 
     if (!response.ok) {
+      console.error('OpenAI API error:', response.status, response.statusText);
       throw new Error(`OpenAI API error: ${response.statusText}`);
     }
 
     const data = await response.json();
     const generatedContent = data.choices[0].message.content;
 
-    // Salvar o documento no banco de dados
+    console.log('Generated content length:', generatedContent.length);
+
+    // Usar o valor do enum correto para o banco
     const { data: document, error } = await supabase
       .from('documents')
       .insert({
-        title: `${documentType} - ${new Date().toLocaleDateString('pt-BR')}`,
-        type: documentType.toLowerCase().replace(/\s+/g, '_'),
+        title: `${documentTypeLabel} - ${new Date().toLocaleDateString('pt-BR')}`,
+        type: documentType, // Usar o valor do enum aqui
         creator_id: user.user.id,
         content: {
           text: generatedContent,
@@ -105,8 +113,11 @@ Retorne apenas o conteúdo do documento em formato texto, sem explicações adic
       .single();
 
     if (error) {
+      console.error('Database error:', error);
       throw error;
     }
+
+    console.log('Document created successfully:', document.id);
 
     // Criar registros de assinatura para cada signatário
     const signaturePromises = signers.map((signer: any) => 
