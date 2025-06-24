@@ -57,7 +57,7 @@ const Dashboard = () => {
         .from('documents')
         .select('*')
         .order('updated_at', { ascending: false })
-        .limit(5);
+        .limit(10);
 
       if (documentsError) throw documentsError;
       setDocuments(documentsData || []);
@@ -208,14 +208,11 @@ const Dashboard = () => {
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
-                <CardTitle>Documentos Recentes</CardTitle>
+                <CardTitle>Meus Documentos</CardTitle>
                 <CardDescription>
-                  Seus documentos mais recentes e seu status atual
+                  Todos os seus documentos criados e seu status atual
                 </CardDescription>
               </div>
-              <Button variant="outline" asChild>
-                <Link to="/documents">Ver Todos</Link>
-              </Button>
             </div>
           </CardHeader>
           <CardContent>

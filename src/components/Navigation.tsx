@@ -31,7 +31,6 @@ const Navigation = () => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Criar Documento', href: '/create', icon: Plus },
-    { name: 'Documentos', href: '/documents', icon: FileText },
   ];
 
   const isActive = (path: string) => location.pathname === path;

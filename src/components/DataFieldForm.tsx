@@ -16,6 +16,7 @@ const DataFieldForm = ({ onSave, onCancel }: DataFieldFormProps) => {
   const [label, setLabel] = useState('');
   const [value, setValue] = useState('');
   const [type, setType] = useState('');
+  const [customType, setCustomType] = useState('');
 
   const fieldTypes = [
     { value: 'text', label: 'Texto' },
@@ -28,6 +29,7 @@ const DataFieldForm = ({ onSave, onCancel }: DataFieldFormProps) => {
     { value: 'currency', label: 'Valor Monetário' },
     { value: 'percentage', label: 'Porcentagem' },
     { value: 'number', label: 'Número' },
+    { value: 'custom', label: 'Personalizado' },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,19 +39,30 @@ const DataFieldForm = ({ onSave, onCancel }: DataFieldFormProps) => {
       return;
     }
 
+    // Se for tipo personalizado, verificar se foi preenchido
+    if (type === 'custom' && !customType.trim()) {
+      return;
+    }
+
     onSave({
       label: label.trim(),
       value: value.trim(),
-      type,
+      type: type === 'custom' ? customType.trim() : type,
     });
 
     setLabel('');
     setValue('');
     setType('');
+    setCustomType('');
   };
 
   const handleTypeChange = (selectedType: string) => {
     setType(selectedType);
+    
+    // Limpar tipo personalizado se outro tipo for selecionado
+    if (selectedType !== 'custom') {
+      setCustomType('');
+    }
     
     // Auto-fill label based on type
     const typeLabels: { [key: string]: string } = {
@@ -95,6 +108,19 @@ const DataFieldForm = ({ onSave, onCancel }: DataFieldFormProps) => {
                 </SelectContent>
               </Select>
             </div>
+
+            {type === 'custom' && (
+              <div>
+                <Label htmlFor="customType">Tipo Personalizado *</Label>
+                <Input
+                  id="customType"
+                  value={customType}
+                  onChange={(e) => setCustomType(e.target.value)}
+                  placeholder="Ex: Tipo de Contrato, Modalidade de Serviço"
+                  required
+                />
+              </div>
+            )}
             
             <div>
               <Label htmlFor="fieldLabel">Nome do Campo *</Label>

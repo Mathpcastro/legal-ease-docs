@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Create from "./pages/Create";
+import DocumentView from "./pages/DocumentView";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient({
@@ -31,6 +32,7 @@ const App = () => {
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/create" element={<Create />} />
+            <Route path="/documents/:id" element={<DocumentView />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

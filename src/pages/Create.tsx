@@ -54,6 +54,21 @@ const Create = () => {
     { value: 'other', label: 'Outro' },
   ];
 
+  const getDescriptionPlaceholder = (type: string) => {
+    const placeholders = {
+      contract: "Contrato de prestação de serviços de consultoria em marketing digital para empresa X, com duração de 6 meses, valor de R$ 5.000 mensais e entrega de relatórios quinzenais.",
+      nda: "Acordo de confidencialidade entre empresa ABC e prestador de serviços para proteção de informações sigilosas sobre novo produto em desenvolvimento, com vigência de 2 anos.",
+      power_of_attorney: "Procuração para representação em questões bancárias, permitindo movimentação de conta corrente, assinatura de contratos e resolução de pendências junto ao Banco XYZ.",
+      service_agreement: "Acordo para prestação de serviços de desenvolvimento de site institucional, incluindo design, programação e hospedagem, com prazo de entrega de 30 dias.",
+      employment_contract: "Contrato de trabalho para cargo de analista de marketing, regime CLT, salário de R$ 4.500, carga horária de 40h semanais, com início em [data].",
+      rental_agreement: "Contrato de aluguel de apartamento de 2 quartos, localizado na Rua ABC, 123, com valor mensal de R$ 1.200, prazo de 12 meses e fiador.",
+      partnership_agreement: "Acordo de parceria comercial entre duas empresas para distribuição de produtos, definindo territórios, comissões de 15% e metas trimestrais de vendas.",
+      other: "Descreva detalhadamente o tipo de documento que você precisa criar, incluindo finalidade, partes envolvidas, valores, prazos e condições específicas."
+    };
+    
+    return placeholders[type as keyof typeof placeholders] || "Selecione um tipo de documento para ver um exemplo de descrição...";
+  };
+
   const addSigner = (signer: Signer) => {
     setSigners([...signers, signer]);
     setShowSignerForm(false);
@@ -165,7 +180,7 @@ const Create = () => {
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Ex: Contrato de prestação de serviços de consultoria em marketing digital para empresa X, com duração de 6 meses..."
+                  placeholder={getDescriptionPlaceholder(documentType)}
                   rows={4}
                   required
                 />
